@@ -1,0 +1,9 @@
+<%
+  reporter = _ob.get(:Reporter, _get["reporter_id"])
+  
+  print sprintf(_("View reporter: %s"), reporter.name.html)
+%>
+
+<div style="padding-bottom: 15px;">
+  <input type="button" value="<%=_"Edit reporter"%>" onclick="location.href='/?s=reporter_edit&amp;reporter_id=<%=reporter.id%>';" />
+</div>

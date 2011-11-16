@@ -1,0 +1,9 @@
+<%
+  service = _ob.get(:Service, _get["service_id"])
+  
+  print _site.header(sprintf(_("View service: %s"), service.name.html))
+%>
+
+<div style="padding-bottom: 15px;">
+  <input type="button" value="<%=_"Edit service"%>" onclick="location.href='/?s=service_edit&amp;service_id=<%=service.id%>';" />
+</div>

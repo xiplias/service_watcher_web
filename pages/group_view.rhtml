@@ -5,5 +5,44 @@
 %>
 
 <div style="padding-bottom: 15px;">
-  <input type="button" value="<%=_"Edit"%>" onclick="location.href='/?s=group_edit&amp;group_id=<%=group.id%>';" />
+  <input type="button" value="<%=_"Edit group"%>" onclick="location.href='/?s=group_edit&amp;group_id=<%=group.id%>';" />
 </div>
+
+<%=_site.boxt(_("Services"), 350)%>
+  <div style="padding-bottom: 15px;">
+    <input type="button" value="<%=_"Add service"%>" onclick="location.href='/?s=service_edit&amp;group_id=<%=group.id%>';" />
+  </div>
+  
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%=_"Service"%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        services = group.services
+        
+        services.each do |service|
+          %>
+            <tr>
+              <td>
+                <%=service.html%>
+              </td>
+            </tr>
+          <%
+        end
+        
+        if services.empty?
+          %>
+            <tr>
+              <td colspan="1" class="error">
+                <%=_"No services were found."%>
+              </td>
+            </tr>
+          <%
+        end
+      %>
+    </tbody>
+  </table>
+<%=_site.boxb%>

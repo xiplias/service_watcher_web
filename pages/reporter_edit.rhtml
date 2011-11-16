@@ -1,0 +1,122 @@
+<%
+  if _get["choice"] == "dosave"
+    save_hash = {
+      :name => _post["texname"]
+    }
+  end
+  
+  if _get["reporter_id"].to_i > 0
+    reporter = _ob.get(:Reporter, _get["reporter_id"])
+    title = sprintf(_("Edit reporter: %s"), reporter.name.html)
+    
+    if _get["choice"] == "dosave"
+      reporter.update(save_hash)
+    end
+    
+    if _get["choice"] == "dodelete"
+      _ob.delete(reporter)
+      _kas.redirect("/?s=dashboard")
+    end
+  else
+    title = _"Add new reporter"
+    
+    if _get["choice"] == "dosave"
+      reporter = _ob.add(:Reporter, save_hash)
+    end
+  end
+  
+  if _get["choice"] == "dosave"
+    options = {}
+    _post.each do |name, val|
+      if match = name.match(/^(.+)_opt$/)
+        options[match[1]] = val
+      end
+    end
+    
+    _sw.request(:c => :reporter, :a => :update_options, :reporter_id => reporter.id, :options => options)
+    _kas.redirect(reporter.url)
+  end
+  
+  if _get["choice"] == "plugin_arguments"
+    args = _sw.request(:c => :reporter, :a => :plugin_args, :plugin_name => _get["plugin_name"])
+    options = reporter.options if reporter
+    
+    args.each do |arg|
+      Knj::ArrayExt.hash_sym(arg)
+      arg[:value] = options[arg[:name].to_s] if options and options.key?(arg[:name].to_s)
+      arg[:name] = "#{arg[:name]}_opt"
+    end
+    
+    %>
+      <table class="form">
+        <%
+          print _kas.inputs(*args)
+        %>
+      </table>
+    <%
+    
+    exit
+  end
+  
+  print _site.header(title)
+%>
+
+<form method="post" action="/?s=reporter_edit&amp;choice=dosave<%if reporter; print "&amp;reporter_id=#{reporter.id}"; end%>">
+
+<%=_site.boxt(_("Enter details"), 350)%>
+  <table class="form">
+    <%
+      print _kas.inputs({
+        :title => _("Name"),
+        :name => "texname",
+        :value => [reporter, :name],
+        :descr => _("The name of the reporter as it should appear in the system.")
+      },{
+        :title => _("Plugin"),
+        :name => "selplugin",
+        :value => [reporter, :plugin],
+        :opts => _sw.request(:c => :reporter, :a => :plugins_opts),
+        :descr => _("The plugin that this reporter should use when reporting."),
+        :onchange => "update_plugin_arguments();"
+      })
+    %>
+    <tr>
+      <td colspan="2" class="buttons">
+        <%if reporter%>
+          <input type="button" value="<%=_"View"%>" onclick="location.href='<%=reporter.url%>';" />
+          <input type="button" value="<%=_"Delete"%>" onclick="if (confirm('<%=_"Do you want to delete this reporter?"%>')){location.href='/?s=reporter_edit&amp;reporter_id=<%=reporter.id%>&amp;choice=dodelete';}" />
+        <%end%>
+        <input type="submit" value="<%=_"Save"%>" />
+      </td>
+    </tr>
+  </table>
+<%=_site.boxb%>
+
+<br />
+
+<%=_site.boxt(_("Plugin arguments"), 350)%>
+  <div id="divpluginarguments">
+    <div class="error">
+      <%=_"Loading - please wait..."%>
+    </div>
+  </div>
+<%=_site.boxb%>
+
+</form>
+
+<script type="text/javascript">
+  $("#texname").focus();
+  
+  function update_plugin_arguments(){
+    $.ajax({type: "GET", url: "/clean.rhtml?s=reporter_edit&choice=plugin_arguments<%if reporter; print '&reporter_id=' + reporter.id.to_s; end%>&plugin_name=" + $("#selplugin").val(), async: true, cache: false, complete: function(data){
+      $("#divpluginarguments").slideUp("fast", function(){
+        $("#divpluginarguments").html(data.responseText);
+        $("#divpluginarguments").slideDown("fast");
+      });
+    }});
+  }
+  
+  $(document).ready(function(){
+    update_plugin_arguments();
+  });
+</script>

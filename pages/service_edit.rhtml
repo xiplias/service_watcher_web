@@ -1,0 +1,137 @@
+<%
+  if _get["choice"] == "dosave"
+    save_hash = {
+      :name => _post["texname"],
+      :plugin => _post["selplugin"],
+      :timeout => _post["textimeout"],
+      :group_id => _post["selgroup"]
+    }
+  end
+  
+  if _get["service_id"].to_i > 0
+    service = _ob.get(:Service, _get["service_id"])
+    title = sprintf(_("Edit service: %s"), service.name.html)
+    
+    if _get["choice"] == "dosave"
+      service.update(save_hash)
+    end
+    
+    if _get["choice"] == "dodelete"
+      group = service.group
+      _ob.delete(service)
+      _kas.redirect(group.url)
+    end
+  else
+    title = _"Add new service"
+    
+    if _get["choice"] == "dosave"
+      service = _ob.add(:Service, save_hash)
+    end
+  end
+  
+  if _get["choice"] == "dosave"
+    options = {}
+    _post.each do |name, val|
+      if match = name.match(/^(.+)_opt$/)
+        options[match[1]] = val
+      end
+    end
+    
+    _sw.request(:c => :service, :a => :update_options, :service_id => service.id, :options => options)
+    _kas.redirect(service.url)
+  end
+  
+  if _get["choice"] == "plugin_arguments"
+    args = _sw.request(:c => :plugin, :a => :args, :plugin_name => _get["plugin_name"])
+    options = service.options if service
+    
+    args.each do |arg|
+      Knj::ArrayExt.hash_sym(arg)
+      arg[:value] = options[arg[:name].to_s] if options and options.key?(arg[:name].to_s)
+      arg[:name] = "#{arg[:name]}_opt"
+    end
+    
+    %>
+      <table class="form">
+        <%
+          print _kas.inputs(*args)
+        %>
+      </table>
+    <%
+    
+    exit
+  end
+  
+  print _site.header(title)
+%>
+
+<form method="post" action="/?s=service_edit&amp;choice=dosave<%if service; print "&amp;service_id=#{service.id}"; else; print "&amp;group_id=#{_get["group_id"]}"; end%>">
+
+<%=_site.boxt(_("Enter details"), 350)%>
+  <table class="form">
+    <%
+      print _kas.inputs({
+        :title => _("Name"),
+        :name => "texname",
+        :value => [service, :name],
+        :descr => _("The name of the service as it should appear in various lists, links etc..")
+      },{
+        :title => _("Timeout"),
+        :name => "textimeout",
+        :value => [service, :timeout],
+        :descr => _("How many seconds should pass between running the service-check.")
+      },{
+        :title => _("Plugin"),
+        :name => "selplugin",
+        :opts => _sw.request(:c => :plugin, :a => :list_opts),
+        :value => [service, :plugin],
+        :descr => _("The plugin that this service should use."),
+        :onchange => "update_plugin_arguments();"
+      },{
+        :title => _("Group"),
+        :name => "selgroup",
+        :opts => _ob.list_optshash(:Group),
+        :value => [service, :group_id],
+        :descr => _("The group that this service belongs to.")
+      })
+    %>
+    <tr>
+      <td colspan="2" class="buttons">
+        <%if service%>
+          <input type="button" value="<%=_"View"%>" onclick="location.href='<%=service.url%>';" />
+          <input type="button" value="<%=_"Delete"%>" onclick="if (confirm('<%=_"Do you want to delete this service?"%>')){location.href='/?s=service_edit&amp;service_id=<%=service.id%>&amp;choice=dodelete';}" />
+        <%end%>
+        <input type="submit" value="<%=_"Save"%>" />
+      </td>
+    </tr>
+  </table>
+<%=_site.boxb%>
+
+<br />
+
+<%=_site.boxt(_("Plugin arguments"), 350)%>
+  <div id="divpluginarguments">
+    <div class="error">
+      <%=_"Loading - please wait..."%>
+    </div>
+  </div>
+<%=_site.boxb%>
+
+</form>
+
+<script type="text/javascript">
+  $("#texname").focus();
+  
+  function update_plugin_arguments(){
+    $.ajax({type: "GET", url: "/clean.rhtml?s=service_edit&choice=plugin_arguments<%if service; print '&service_id=' + service.id.to_s; end%>&plugin_name=" + $("#selplugin").val(), async: true, cache: false, complete: function(data){
+      $("#divpluginarguments").slideUp("fast", function(){
+        $("#divpluginarguments").html(data.responseText);
+        $("#divpluginarguments").slideDown("fast");
+      });
+    }});
+  }
+  
+  $(document).ready(function(){
+    update_plugin_arguments();
+  });
+</script>

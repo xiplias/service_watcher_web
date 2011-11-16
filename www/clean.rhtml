@@ -1,0 +1,17 @@
+<%
+  _site.load_request
+  
+  if !_get["s"]
+    if !_session["host"]
+      show = "connect"
+    else
+      show = "dashboard"
+    end
+  else
+    show = _get["s"]
+  end
+  
+  showp = "../pages/#{show}.rhtml"
+  
+  _kas.import(showp)
+%>
