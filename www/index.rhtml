@@ -1,0 +1,70 @@
+<%
+  _site.load_request
+  
+  if !_get["s"]
+    if !_session["host"]
+      show = "connect"
+    else
+      show = "dashboard"
+    end
+  else
+    show = _get["s"]
+  end
+  
+  showp = "../pages/#{show}.rhtml"
+%>
+<html>
+<head>
+  <title>ServiceWatcher</title>
+  
+  <link rel="stylesheet" type="text/css" href="/css/default.css" />
+  
+  <script type="text/javascript" src="/js/knjjsfw/jquery.js"></script>
+  <script type="text/javascript" src="/js/default.js"></script>
+</head>
+<body>
+  <center>
+  
+  <table style="width: 1000px; height: 100%; border-left: 1px solid black; border-right: 1px solid black;">
+    <tr>
+      <td style="width: 100%;">
+        Logo
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <%
+          if _session[:host] and _session_hash[:sw]
+            menu = [
+              {:title => _("Dashboard"), :link => "/?s=dashboard"},
+              {:title => _("Log out"), :link => "/?s=connect&choice=dologout"}
+            ]
+          else
+            menu = {:title => _("Log in"), :link => "/?show=connect"}
+          end
+          
+          menu.each do |data|
+            %>
+              <a href="<%=data[:link]%>"><%=data[:title]%></a>&nbsp;&nbsp;
+            <%
+          end
+        %>
+      </td>
+    </tr>
+    <tr>
+      <td style="height: 100%; vertical-align: top;">
+        <%
+          _kas.import(showp)
+        %>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Bottom
+      </td>
+    </tr>
+  </table>
+  
+  </center>
+</body>
+</html>

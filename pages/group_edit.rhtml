@@ -1,0 +1,60 @@
+<%
+  if _get["group_id"]
+    group = _ob.get(:Group, _get["group_id"])
+    title = sprintf(_("Edit group: %s"), group.name.html)
+    
+    if _get["choice"] == "dosave"
+      _kas.on_error_go_back do
+        group.update(:name => _post["texname"])
+        _kas.redirect("/?s=group_edit&group_id=#{group.id}")
+      end
+    end
+    
+    if _get["choice"] == "dodelete"
+      _ob.delete(group)
+      _kas.redirect("/?s=dashboard")
+    end
+  else
+    title = _"Add new group"
+    
+    if _get["choice"] == "dosave"
+      _kas.on_error_go_back do
+        group = _ob.add(:Group, {
+          :name => _post["texname"]
+        })
+      end
+      _kas.redirect("/?s=group_edit&group_id=#{group.id}")
+    end
+  end
+  
+  print _site.header(title.html)
+%>
+
+<form method="post" action="/?s=group_edit&amp;choice=dosave<%if group; print "&amp;group_id=#{group.id}"; end%>">
+
+<%=_site.boxt(_("Enter details"), 350)%>
+  <table class="form">
+    <%
+      print _kas.inputs({
+        :title => _("Name"),
+        :name => "texname",
+        :value => [group, :name],
+        :descr => _("The name of the group.")
+      })
+    %>
+    <tr>
+      <td colspan="2" class="buttons">
+        <%if group%>
+          <input type="button" value="<%=_"Delete"%>" onclick="if (confirm('<%=_"Do you want to delete this group?"%>')){location.href='/?s=group_edit&amp;group_id=<%=group.id%>&amp;choice=dodelete';}" />
+        <%end%>
+        <input type="submit" value="<%=_"Save"%>" />
+      </td>
+    </tr>
+  </table>
+<%=_site.boxb%>
+
+</form>
+
+<script type="text/javascript">
+  $("#texname").focus();
+</script>

@@ -1,0 +1,58 @@
+<%
+  if _get["choice"] == "doconnect"
+    begin
+      _session[:host] = _post["texhost"]
+      _session[:port] = _post["texport"].to_i
+      _session[:ssl] = Knj::Web.checkval(_post["chessl"], true, false)
+      
+      _site.connect_client
+    rescue Errno::ECONNREFUSED
+      _kas.alert(_("No server is responding on that hostname and/or port.")).back
+    end
+    
+    _kas.redirect("/?s=dashboard")
+  end
+  
+  print _site.header(_("Connect"))
+%>
+
+<form method="post" action="/?s=connect&amp;choice=doconnect">
+
+<%=_site.boxt(_("Enter details"), 350)%>
+  <table class="form">
+    <%
+      print _kas.inputs({
+        :title => _("Host"),
+        :name => "texhost",
+        :descr => _("The hostname of the server you wish to connect to.")
+      },{
+        :title => _("Port"),
+        :name => "texport",
+        :descr => _("The port of the server you wish to connect to.")
+      },{
+        :title => _("SSL"),
+        :name => "chessl",
+        :descr => _("If you wish to use SSL or not.")
+      },{
+        :title => _("Username"),
+        :name => "texuser",
+        :descr => _("You username you wish to log in with.")
+      },{
+        :title => _("Password"),
+        :name => "texpass",
+        :descr => _("The password you wish to log in with.")
+      })
+    %>
+    <tr>
+      <td colspan="2" class="buttons">
+        <input type="submit" value="<%=_"Connect"%>" />
+      </td>
+    </tr>
+  </table>
+<%=_site.boxb%>
+
+</form>
+
+<script type="text/javascript">
+  $("#texhost").focus();
+</script>

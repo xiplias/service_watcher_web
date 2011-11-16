@@ -1,0 +1,44 @@
+<%
+  print _site.header(_("Dashboard"))
+%>
+
+<%=_site.boxt(_("Groups"), 350)%>
+  <div style="padding-bottom: 15px;">
+    <input type="button" value="<%=_"Add new"%>" onclick="location.href='/?s=group_edit';" />
+  </div>
+  
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%=_"Group"%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        groups = _session_hash[:sw].request(:c => :group, :a => :list)
+        
+        groups.each do |groupd|
+          group = _ob.get(:Group, groupd)
+          
+          %>
+            <tr>
+              <td>
+                <%=group.html%>
+              </td>
+            </tr>
+          <%
+        end
+        
+        if groups.empty?
+          %>
+            <tr>
+              <td colspan="1" class="error">
+                <%=_"No groups was found."%>
+              </td>
+            </tr>
+          <%
+        end
+      %>
+    </tbody>
+  </table>
+<%=_site.boxb%>

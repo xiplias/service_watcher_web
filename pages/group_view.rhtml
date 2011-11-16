@@ -1,0 +1,9 @@
+<%
+  group = _ob.get(:Group, _get["group_id"])
+  
+  print _site.header(sprintf(_("View group: %s"), group.name))
+%>
+
+<div style="padding-bottom: 15px;">
+  <input type="button" value="<%=_"Edit"%>" onclick="location.href='/?s=group_edit&amp;group_id=<%=group.id%>';" />
+</div>
