@@ -1,6 +1,31 @@
 <%
   group = _ob.get(:Group, _get["group_id"])
   
+  if _get["choice"] == "add_reporter"
+    show_reporters = _ob.list(:Reporter) - group.reporters
+    show_reporters.each do |reporter|
+      %>
+        <div>
+          <a href="javascript: group_view_add_reporter('<%=reporter.id%>');"><%=reporter.name.html%></a>
+        </div>
+      <%
+    end
+    
+    exit
+  end
+  
+  if _get["choice"] == "save_reporter"
+    reporter = _ob.get(:Reporter, _get["reporter_id"])
+    group.add_reporter(reporter)
+    exit
+  end
+  
+  if _get["choice"] == "remove_reporter"
+    reporter = _ob.get(:Reporter, _get["reporter_id"])
+    group.remove_reporter(reporter)
+    exit
+  end
+  
   print _site.header(sprintf(_("View group: %s"), group.name))
 %>
 
@@ -46,3 +71,70 @@
     </tbody>
   </table>
 <%=_site.boxb%>
+
+<br />
+
+<%=_site.boxt(_("Reporters"), 350)%>
+  <div style="padding-bottom: 15px;">
+    <input type="button" value="<%=_"Add reporter"%>" onclick="modal({title: '<%=_"Add reporter"%>', url: '/clean.rhtml?s=group_view&amp;choice=add_reporter&amp;group_id=<%=group.id%>'});" />
+  </div>
+  
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%=_"Reporter"%></th>
+        <th><%=_"Actions"%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        reporters = group.reporters
+        
+        reporters.each do |reporter|
+          %>
+            <tr>
+              <td>
+                <%=reporter.html%>
+              </td>
+              <td>
+                (<a href="javascript: if (confirm('<%=_"Do you want to remove this reporter?"%>')){group_remove_reporter('<%=reporter.id%>');}"><%=_"remove"%></a>)
+              </td>
+            </tr>
+          <%
+        end
+        
+        if reporters.empty?
+          %>
+            <tr>
+              <td colspan="2" class="error">
+                <%=_"No reporters has been added to this group."%>
+              </td>
+            </tr>
+          <%
+        end
+      %>
+    </tbody>
+  </table>
+<%=_site.boxb%>
+
+<script type="text/javascript">
+  function group_view_add_reporter(reporter_id){
+    $.ajax({type: "GET", url: "/clean.rhtml?s=group_view&choice=save_reporter&group_id=<%=group.id%>&reporter_id=" + reporter_id, cache: false, async: true, complete: function(data){
+      if (data.responseText.length > 0){
+        alert(data.responseText);
+      }
+      
+      location.reload();
+    }});
+  }
+  
+  function group_remove_reporter(reporter_id){
+    $.ajax({type: "GET", url: "/clean.rhtml?s=group_view&choice=remove_reporter&group_id=<%=group.id%>&reporter_id=" + reporter_id, cache: false, async: true, complete: function(data){
+      if (data.responseText.length > 0){
+        alert(data.responseText);
+      }
+      
+      location.reload();
+    }});
+  }
+</script>

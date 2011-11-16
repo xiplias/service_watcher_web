@@ -7,3 +7,16 @@
 <div style="padding-bottom: 15px;">
   <input type="button" value="<%=_"Edit service"%>" onclick="location.href='/?s=service_edit&amp;service_id=<%=service.id%>';" />
 </div>
+
+<%=_site.boxt(_("Information"), 350)%>
+  <table class="form">
+    <%
+      print _kas.inputs({
+        :title => _("Group"),
+        :type => :info,
+        :value => service.group.html,
+        :descr => _("The group that this service belongs to.")
+      })
+    %>
+  </table>
+<%=_site.boxb%>
