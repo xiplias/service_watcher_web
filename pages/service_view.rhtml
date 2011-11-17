@@ -20,3 +20,48 @@
     %>
   </table>
 <%=_site.boxb%>
+
+<br />
+
+<%=_site.boxt(_("Logs"), "100%")%>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%=_"ID"%></th>
+        <th><%=_"Message"%></th>
+        <th><%=_"Date"%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        logs = _ob.list(:Log, {"object_lookup" => service, "limit" => 500, "orderby" => [["date_saved", "desc"]]})
+        
+        logs.each do |log|
+          %>
+            <tr>
+              <td>
+                <%=log.id%>
+              </td>
+              <td>
+                <%=log[:text].html%>
+              </td>
+              <td>
+                <%=log[:date_saved_str].html%>
+              </td>
+            </tr>
+          <%
+        end
+        
+        if logs.empty?
+          %>
+            <tr>
+              <td colspan="2" class="error">
+                <%=_"No logs has been saved for this service."%>
+              </td>
+            </tr>
+          <%
+        end
+      %>
+    </tbody>
+  </table>
+<%=_site.boxb%>

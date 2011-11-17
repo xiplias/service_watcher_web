@@ -120,6 +120,10 @@ td.tdt{
   white-space: nowrap;
 }
 
+td.tdc{
+  width: 100%;
+}
+
 td.tdd{
   font-size: 10px;
   color: grey;

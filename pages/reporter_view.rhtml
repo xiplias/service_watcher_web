@@ -19,7 +19,7 @@
     </thead>
     <tbody>
       <%
-        logs = _ob.list(:Log, {"object_lookup" => reporter, "orderby" => [["date_saved", "desc"]]})
+        logs = _ob.list(:Log, {"object_lookup" => reporter, "limit" => 500, "orderby" => [["date_saved", "desc"]]})
         
         logs.each do |log|
           %>
