@@ -18,8 +18,21 @@
     
     if _get["choice"] == "dodelete"
       group = service.group
+      
+      if group
+        url = group.url
+      else
+        url = "/?s=dashboard"
+      end
+      
       _ob.delete(service)
-      _kas.redirect(group.url)
+      _kas.redirect(url)
+    end
+    
+    if _get["choice"] == "run_check"
+      _sw.request(:c => :service, :a => :check, :service_id => service.id)
+      print _("Success!")
+      exit
     end
   else
     title = _"Add new service"
@@ -38,7 +51,7 @@
     end
     
     _sw.request(:c => :service, :a => :update_options, :service_id => service.id, :options => options)
-    _kas.redirect(service.url)
+    _kas.redirect(service.url_edit)
   end
   
   if _get["choice"] == "plugin_arguments"
@@ -70,6 +83,12 @@
 <%=_site.boxt(_("Enter details"), 350)%>
   <table class="form">
     <%
+      if service
+        grp_id = service[:group_id]
+      elsif _get["group_id"]
+        grp_id = _get["group_id"]
+      end
+      
       print _kas.inputs({
         :title => _("Name"),
         :name => "texname",
@@ -79,7 +98,8 @@
         :title => _("Timeout"),
         :name => "textimeout",
         :value => [service, :timeout],
-        :descr => _("How many seconds should pass between running the service-check.")
+        :descr => _("How many seconds should pass between running the service-check."),
+        :default => 300
       },{
         :title => _("Plugin"),
         :name => "selplugin",
@@ -91,13 +111,14 @@
         :title => _("Group"),
         :name => "selgroup",
         :opts => _ob.list_optshash(:Group),
-        :value => [service, :group_id],
+        :value => grp_id,
         :descr => _("The group that this service belongs to.")
       })
     %>
     <tr>
       <td colspan="2" class="buttons">
         <%if service%>
+          <input type="button" value="<%=_"Run check"%>" onclick="run_check();" />
           <input type="button" value="<%=_"View"%>" onclick="location.href='<%=service.url%>';" />
           <input type="button" value="<%=_"Delete"%>" onclick="if (confirm('<%=_"Do you want to delete this service?"%>')){location.href='/?s=service_edit&amp;service_id=<%=service.id%>&amp;choice=dodelete';}" />
         <%end%>
@@ -117,6 +138,21 @@
   </div>
 <%=_site.boxb%>
 
+<div id="divruncheck" style="display: none;">
+  <br />
+  
+  <%=_site.boxt(_("Running check"), 800)%>
+    <div id="divruncheckstatus">
+      <div class="error">
+        <%=_"Running check - please wait..."%>
+      </div>
+    </div>
+    <div class="buttons" style="padding-top: 15px;">
+      <input type="button" value="<%=_"Close"%>" onclick="$('#divruncheck').slideUp('fast');" />
+    </div>
+  <%=_site.boxb%>
+</div>
+
 </form>
 
 <script type="text/javascript">
@@ -130,6 +166,19 @@
       });
     }});
   }
+  
+  <%if service%>
+    function run_check(){
+      $("#divruncheck").slideDown("fast", function(){
+        $.ajax({type: "GET", url: "/clean.rhtml?s=service_edit&choice=run_check&service_id=<%=service.id%>", async: true, cache: false, complete: function(data){
+          $("#divruncheckstatus").slideUp("fast", function(){
+            $("#divruncheckstatus").html(data.responseText);
+            $("#divruncheckstatus").slideDown("fast");
+          });
+        }});
+      });
+    }
+  <%end%>
   
   $(document).ready(function(){
     update_plugin_arguments();

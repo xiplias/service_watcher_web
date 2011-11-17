@@ -1,9 +1,52 @@
 <%
   reporter = _ob.get(:Reporter, _get["reporter_id"])
   
-  print sprintf(_("View reporter: %s"), reporter.name.html)
+  print _site.header(sprintf(_("View reporter: %s"), reporter.name.html))
 %>
 
 <div style="padding-bottom: 15px;">
   <input type="button" value="<%=_"Edit reporter"%>" onclick="location.href='/?s=reporter_edit&amp;reporter_id=<%=reporter.id%>';" />
 </div>
+
+<%=_site.boxt(_("Logs"), "100%")%>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%=_"ID"%></th>
+        <th><%=_"Message"%></th>
+        <th><%=_"Date"%></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%
+        logs = _ob.list(:Log, {"object_lookup" => reporter, "orderby" => [["date_saved", "desc"]]})
+        
+        logs.each do |log|
+          %>
+            <tr>
+              <td>
+                <%=log.id%>
+              </td>
+              <td>
+                <%=log[:text].html%>
+              </td>
+              <td>
+                <%=log[:date_saved_str].html%>
+              </td>
+            </tr>
+          <%
+        end
+        
+        if logs.empty?
+          %>
+            <tr>
+              <td colspan="2" class="error">
+                <%=_"No logs has been saved for this reporter."%>
+              </td>
+            </tr>
+          <%
+        end
+      %>
+    </tbody>
+  </table>
+<%=_site.boxb%>

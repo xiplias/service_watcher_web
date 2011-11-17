@@ -1,10 +1,128 @@
-body, html{
+body, html, html > body > center{
   width: 100%;
   height: 100%;
   padding: 0px;
   margin: 0px;
 }
 
+body, html, div, td{
+  font-family: verdana, tahoma, arial;
+  font-size: 12px;
+}
+
+body{
+  background-image: url("/imgs/body_bg.png");
+}
+
+table.main_table{
+  width: 1000px;
+  height: 100%;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  background-color: #fff;
+}
+
+td.main_logo{
+  font-size: 25px;
+  font-weight: bold;
+  padding: 19px;
+}
+
+td.main_content{
+  height: 100%;
+  vertical-align: top;
+  padding: 12px;
+}
+
+td.main_menu{
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 8px;
+}
+
+td.main_menu > a:link, td.main_menu > a:visited{
+  text-decoration: none;
+  color: #04516d;
+}
+
+td.main_menu > a:active, td.main_menu > a:hover{
+  text-decoration: underline;
+  color: #04516d;
+}
+
+a:link, a:visited{
+  text-decoration: none;
+  color: #0f2470;
+}
+
+a:active, a:hover{
+  text-decoration: underline;
+  color: #0f2470;
+}
+
 table > thead > tr > th{
   text-align: left;
+  font-size: 12px;
+}
+
+div.box{
+  background-color: #f3f3f3;
+  border-radius: 7px;
+  padding: 12px;
+}
+
+div.box_title{
+  font-weight: bold;
+  font-size: 14px;
+  padding-bottom: 5px;
+}
+
+input[type=submit], input[type=button]{
+  border: 1px solid #989898;
+  border-radius: 3px;
+  background-color: #ececec;
+  color: #000000;
+  padding: 4px 8px 4px 8px;
+  font-size: 12px;
+}
+
+table.form, table.list{
+  width: 100%;
+}
+
+input.input_text, input.input_password, select.input_select, textarea.input_textarea{
+  width: 100%;
+}
+
+input[type=checkbox]{
+  background-color: transparent;
+  border: none;
+}
+
+input, textaera, select{
+  border: 1px solid #bbbbbb;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 4px;
+}
+
+td.tdcheck{
+  font-weight: bold;
+}
+
+td.buttons{
+  text-align: right;
+  padding-top: 4px;
+}
+
+td.tdt{
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+td.tdd{
+  font-size: 10px;
+  color: grey;
+  padding-bottom: 6px;
+  padding-top: 0px;
 }

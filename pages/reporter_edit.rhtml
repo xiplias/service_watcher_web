@@ -1,7 +1,8 @@
 <%
   if _get["choice"] == "dosave"
     save_hash = {
-      :name => _post["texname"]
+      :name => _post["texname"],
+      :plugin => _post["selplugin"]
     }
   end
   
@@ -45,12 +46,14 @@
       Knj::ArrayExt.hash_sym(arg)
       arg[:value] = options[arg[:name].to_s] if options and options.key?(arg[:name].to_s)
       arg[:name] = "#{arg[:name]}_opt"
+      arg[:type] = arg[:type].to_sym
     end
     
     %>
       <table class="form">
         <%
           print _kas.inputs(*args)
+          print _kas.inputs(*Service_watcher.parse_subject_info_args)
         %>
       </table>
     <%

@@ -4,6 +4,8 @@
       _session[:host] = _post["texhost"]
       _session[:port] = _post["texport"].to_i
       _session[:ssl] = Knj::Web.checkval(_post["chessl"], true, false)
+      _session[:user] = _post["texuser"]
+      _session[:pass] = _post["texpass_md5"]
       
       _site.connect_client
     rescue Errno::ECONNREFUSED
@@ -16,7 +18,8 @@
   print _site.header(_("Connect"))
 %>
 
-<form method="post" action="/?s=connect&amp;choice=doconnect">
+<form method="post" action="/?s=connect&amp;choice=doconnect" onsubmit="return do_login();">
+<%=Knj::Web.hiddens([{:name => "texpass_md5", :value => ""}])%>
 
 <%=_site.boxt(_("Enter details"), 350)%>
   <table class="form">
@@ -55,4 +58,10 @@
 
 <script type="text/javascript">
   $("#texhost").focus();
+  
+  function do_login(){
+    $("input[name=texpass_md5]").val($.md5($("#texpass").val()));
+    $("#texpass").val("");
+    return true;
+  }
 </script>

@@ -13,13 +13,15 @@
   
   showp = "../pages/#{show}.rhtml"
 %>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>ServiceWatcher</title>
   
   <link rel="stylesheet" type="text/css" href="/css/default.css" />
   
   <script type="text/javascript" src="/js/knjjsfw/jquery.js"></script>
+  <script type="text/javascript" src="/js/knjjsfw/jquery.md5.js"></script>
   <script type="text/javascript" src="/js/knjjsfw/modal.js"></script>
   <script type="text/javascript" src="/js/default.js"></script>
 </head>
@@ -35,14 +37,14 @@
   
   <center>
   
-  <table style="width: 1000px; height: 100%; border-left: 1px solid black; border-right: 1px solid black;">
+  <table class="main_table" cellspacing="0" cellpadding="0">
     <tr>
-      <td style="width: 100%;">
-        Logo
+      <td class="main_logo">
+        Service Watcher
       </td>
     </tr>
     <tr>
-      <td>
+      <td class="main_menu">
         <%
           if _session[:host] and _session_hash[:sw]
             menu = [
@@ -50,7 +52,9 @@
               {:title => _("Log out"), :link => "/?s=connect&choice=dologout"}
             ]
           else
-            menu = {:title => _("Log in"), :link => "/?show=connect"}
+            menu = [
+              {:title => _("Log in"), :link => "/?show=connect"}
+            ]
           end
           
           menu.each do |data|
@@ -62,7 +66,7 @@
       </td>
     </tr>
     <tr>
-      <td style="height: 100%; vertical-align: top;">
+      <td class="main_content">
         <%
           _kas.import(showp)
         %>

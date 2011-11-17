@@ -61,6 +61,9 @@ class Service_watcher_web
       :port => _session[:port],
       :ssl => _session[:ssl]
     )
+    res = _session_hash[:sw].login(:username => _session[:user], :password =>_session[:pass])
+    
+    raise _("You could not be logged in with that username and/or password.") if res["user_id"].to_i <= 0
   end
   
   def load_request
@@ -78,8 +81,8 @@ class Service_watcher_web
       width = "#{width}px"
     end
     
-    html = ""
-    html += "<div class=\"box\" style=\"width: #{width};\">"
+    html = "<div style=\"width: #{width};\">"
+    html += "<div class=\"box\">"
     
     if title
       html += "<div class=\"box_title\">#{title}</div>"
@@ -89,6 +92,6 @@ class Service_watcher_web
   end
   
   def boxb
-    return "</div>"
+    return "</div></div>"
   end
 end
