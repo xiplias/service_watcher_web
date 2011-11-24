@@ -138,15 +138,17 @@
   </div>
 <%=_site.boxb%>
 
+<div id="divrunningcheck" style="display: none;">
+  <div class="error">
+    <%=_"Running check - please wait..."%>
+  </div>
+</div>
+
 <div id="divruncheck" style="display: none;">
   <br />
   
   <%=_site.boxt(_("Running check"), 800)%>
-    <div id="divruncheckstatus">
-      <div class="error">
-        <%=_"Running check - please wait..."%>
-      </div>
-    </div>
+    <div id="divruncheckstatus"></div>
     <div class="buttons" style="padding-top: 15px;">
       <input type="button" value="<%=_"Close"%>" onclick="$('#divruncheck').slideUp('fast');" />
     </div>
@@ -169,13 +171,18 @@
   
   <%if service%>
     function run_check(){
-      $("#divruncheck").slideDown("fast", function(){
-        $.ajax({type: "GET", url: "/clean.rhtml?s=service_edit&choice=run_check&service_id=<%=service.id%>", async: true, cache: false, complete: function(data){
-          $("#divruncheckstatus").slideUp("fast", function(){
-            $("#divruncheckstatus").html(data.responseText);
-            $("#divruncheckstatus").slideDown("fast");
+      $("#divruncheckstatus").slideUp("fast", function(){
+        $("#divruncheckstatus").html($("#divrunningcheck").html());
+        $("#divruncheckstatus").slideDown("fast", function(){
+          $("#divruncheck").slideDown("fast", function(){
+            $.ajax({type: "GET", url: "/clean.rhtml?s=service_edit&choice=run_check&service_id=<%=service.id%>", async: true, cache: false, complete: function(data){
+              $("#divruncheckstatus").slideUp("fast", function(){
+                $("#divruncheckstatus").html(data.responseText);
+                $("#divruncheckstatus").slideDown("fast");
+              });
+            }});
           });
-        }});
+        });
       });
     }
   <%end%>

@@ -1,5 +1,40 @@
 <%
   print _site.header(_("Dashboard"))
+  
+  services_failed = _ob.list(:Service, {"failed" => 1, "orderby" => "name"})
+  
+  if services_failed.length > 0
+    %>
+      <%=_site.boxt(_("Failed services!"), 350)%>
+        <table class="list">
+          <thead>
+            <tr>
+              <th><%=_"Service"%></th>
+              <th><%=_"Group"%></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%
+              services_failed.each do |service|
+                %>
+                  <tr>
+                    <td>
+                      <%=service.html%>
+                    </td>
+                    <td>
+                      <%=service.group_html%>
+                    </td>
+                  </tr>
+                <%
+              end
+            %>
+          </tbody>
+        </table>
+      <%=_site.boxb%>
+      
+      <br />
+    <%
+  end
 %>
 
 <%=_site.boxt(_("Groups"), 350)%>
