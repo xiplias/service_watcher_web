@@ -34,7 +34,7 @@
     </thead>
     <tbody>
       <%
-        logs = _ob.list(:Log, {"object_lookup" => service, "limit" => 500, "orderby" => [["date_saved", "desc"]]})
+        logs = _ob.list(:Log, {"object_lookup" => service, "limit" => 200, "orderby" => [["date_saved", "desc"]]})
         
         logs.each do |log|
           %>
