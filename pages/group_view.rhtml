@@ -46,7 +46,7 @@
     </thead>
     <tbody>
       <%
-        services = group.services
+        services = group.services("orderby" => "name")
         
         services.each do |service|
           %>
