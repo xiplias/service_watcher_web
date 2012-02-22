@@ -8,6 +8,7 @@
       _session[:pass] = _post["texpass_md5"]
       
       _site.connect_client
+      _kas.session_remember
     rescue Errno::ECONNREFUSED
       _kas.alert(_("No server is responding on that hostname and/or port.")).back
     end
@@ -43,6 +44,7 @@
       },{
         :title => _("Password"),
         :name => "texpass",
+        :type => :password,
         :descr => _("The password you wish to log in with.")
       })
     %>

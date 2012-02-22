@@ -9,6 +9,7 @@ class Service_watcher_web
     require "#{@args[:knjappserver_path]}knjappserver"
     require "#{@args[:service_watcher_path]}service_watcher"
     require "#{Service_watcher.path}/../include/client.rb"
+    require "json/pure"
     
     require "knj/knjdb/libknjdb"
     @db = Knj::Db.new(@args[:db_args])
@@ -68,7 +69,16 @@ class Service_watcher_web
   
   def load_request
     if _session[:host] and !_session_hash[:sw]
-      self.connect_client
+      begin
+        self.connect_client
+      rescue Errno::ECONNREFUSED
+        _session_hash.delete(:sw)
+        _session.delete(:host)
+        _session.delete(:port)
+        _session.delete(:ssl)
+      end
+    elsif !_session_hash[:sw] and _get["s"] != "connect"
+      @appserver.redirect("/?s=connect")
     end
   end
   
