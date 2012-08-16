@@ -4,26 +4,26 @@
     title = sprintf(_("Edit group: %s"), group.name.html)
     
     if _get["choice"] == "dosave"
-      _kas.on_error_go_back do
+      _hb.on_error_go_back do
         group.update(:name => _post["texname"])
-        _kas.redirect("/?s=group_edit&group_id=#{group.id}")
+        _hb.redirect("/?s=group_edit&group_id=#{group.id}")
       end
     end
     
     if _get["choice"] == "dodelete"
       _ob.delete(group)
-      _kas.redirect("/?s=dashboard")
+      _hb.redirect("/?s=dashboard")
     end
   else
     title = _"Add new group"
     
     if _get["choice"] == "dosave"
-      _kas.on_error_go_back do
+      _hb.on_error_go_back do
         group = _ob.add(:Group, {
           :name => _post["texname"]
         })
       end
-      _kas.redirect("/?s=group_edit&group_id=#{group.id}")
+      _hb.redirect("/?s=group_edit&group_id=#{group.id}")
     end
   end
   
@@ -35,7 +35,7 @@
 <%=_site.boxt(_("Enter details"), 350)%>
   <table class="form">
     <%
-      print _kas.inputs({
+      print _hb.inputs({
         :title => _("Name"),
         :name => "texname",
         :value => [group, :name],

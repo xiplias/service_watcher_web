@@ -5,7 +5,7 @@ class Service_watcher_web
     @args = args
     
     require "#{@args[:knjrbfw_path]}knjrbfw" if !Kernel.const_defined?(:Knj)
-    require "#{@args[:knjappserver_path]}knjappserver"
+    require "#{@args[:hayabusa_path]}hayabusa"
     require "#{@args[:service_watcher_path]}service_watcher"
     require "#{Service_watcher.path}/../include/client.rb"
     require "json"
@@ -40,7 +40,7 @@ class Service_watcher_web
         :locale_default => "en_GB",
       }
       appserver_args[:knjrbfw_path] = @args[:knjrbfw_path] if @args.key?(:knjrbfw_path)
-      appserver_args.merge!(@args[:knjappserver_args]) if @args.key?(:knjappserver_args)
+      appserver_args.merge!(@args[:hayabusa_args]) if @args.key?(:hayabusa_args)
       
       @appserver = Hayabusa.new(appserver_args)
     end

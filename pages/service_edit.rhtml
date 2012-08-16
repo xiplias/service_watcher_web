@@ -30,7 +30,7 @@
       end
       
       _ob.delete(service)
-      _kas.redirect(url)
+      _hb.redirect(url)
     end
     
     if _get["choice"] == "run_check"
@@ -55,7 +55,7 @@
     end
     
     _sw.request(:c => :service, :a => :update_options, :service_id => service.id, :options => options)
-    _kas.redirect(service.url_edit)
+    _hb.redirect(service.url_edit)
   end
   
   if _get["choice"] == "plugin_arguments"
@@ -71,7 +71,7 @@
     %>
       <table class="form">
         <%
-          print _kas.inputs(*args)
+          print _hb.inputs(*args)
         %>
       </table>
     <%
@@ -93,7 +93,7 @@
         grp_id = _get["group_id"]
       end
       
-      print _kas.inputs({
+      print _hb.inputs({
         :title => _("Name"),
         :name => "texname",
         :value => [service, :name],

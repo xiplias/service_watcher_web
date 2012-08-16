@@ -8,12 +8,12 @@
       _session[:pass] = _post["texpass_md5"]
       
       _site.connect_client
-      _kas.session_remember
+      _hb.session_remember
     rescue Errno::ECONNREFUSED
-      _kas.alert(_("No server is responding on that hostname and/or port.")).back
+      _hb.alert(_("No server is responding on that hostname and/or port.")).back
     end
     
-    _kas.redirect("/?s=dashboard")
+    _hb.redirect("/?s=dashboard")
   end
   
   print _site.header(_("Connect"))
@@ -25,7 +25,7 @@
 <%=_site.boxt(_("Enter details"), 350)%>
   <table class="form">
     <%
-      print _kas.inputs({
+      print _hb.inputs({
         :title => _("Host"),
         :name => "texhost",
         :descr => _("The hostname of the server you wish to connect to.")

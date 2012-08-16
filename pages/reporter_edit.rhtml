@@ -16,7 +16,7 @@
     
     if _get["choice"] == "dodelete"
       _ob.delete(reporter)
-      _kas.redirect("/?s=dashboard")
+      _hb.redirect("/?s=dashboard")
     end
   else
     title = _"Add new reporter"
@@ -35,7 +35,7 @@
     end
     
     _sw.request(:c => :reporter, :a => :update_options, :reporter_id => reporter.id, :options => options)
-    _kas.redirect(reporter.url)
+    _hb.redirect(reporter.url)
   end
   
   if _get["choice"] == "plugin_arguments"
@@ -52,8 +52,8 @@
     %>
       <table class="form">
         <%
-          print _kas.inputs(*args)
-          print _kas.inputs(*Service_watcher.parse_subject_info_args)
+          print _hb.inputs(*args)
+          print _hb.inputs(*Service_watcher.parse_subject_info_args)
         %>
       </table>
     <%
@@ -69,7 +69,7 @@
 <%=_site.boxt(_("Enter details"), 350)%>
   <table class="form">
     <%
-      print _kas.inputs({
+      print _hb.inputs({
         :title => _("Name"),
         :name => "texname",
         :value => [reporter, :name],
