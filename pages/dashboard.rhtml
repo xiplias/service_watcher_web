@@ -50,7 +50,7 @@
     </thead>
     <tbody>
       <%
-        groups = _session_hash[:sw].request(:c => :group, :a => :list)
+        groups = _sw.request(:c => :group, :a => :list)
         
         groups.each do |groupd|
           group = _ob.get(:Group, groupd)

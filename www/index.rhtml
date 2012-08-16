@@ -46,7 +46,7 @@
     <tr>
       <td class="main_menu">
         <%
-          if _session[:host] and _session_hash[:sw]
+          if _session[:host]
             menu = [
               {:title => _("Dashboard"), :link => "/?s=dashboard"},
               {:title => _("Log out"), :link => "/?s=connect&choice=dologout"}

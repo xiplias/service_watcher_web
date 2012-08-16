@@ -13,7 +13,11 @@
     title = sprintf(_("Edit service: %s"), service.name.html)
     
     if _get["choice"] == "dosave"
+      #Knj::Php.print_r(_post)
       service.update(save_hash)
+      #service.reload
+      #Knj::Php.print_r(service)
+      #exit
     end
     
     if _get["choice"] == "dodelete"
@@ -35,7 +39,7 @@
       exit
     end
   else
-    title = _"Add new service"
+    title = _("Add new service")
     
     if _get["choice"] == "dosave"
       service = _ob.add(:Service, save_hash)

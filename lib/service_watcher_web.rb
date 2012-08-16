@@ -4,17 +4,21 @@ class Service_watcher_web
   def initialize(args)
     @args = args
     
-    require "#{@args[:knjrbfw_path]}knjrbfw"
-    require "#{@args[:knjdbrevision_path]}knjdbrevision"
+    require "#{@args[:knjrbfw_path]}knjrbfw" if !Kernel.const_defined?(:Knj)
     require "#{@args[:knjappserver_path]}knjappserver"
     require "#{@args[:service_watcher_path]}service_watcher"
     require "#{Service_watcher.path}/../include/client.rb"
-    require "json/pure"
+    require "json"
+    require "http2"
     
-    require "knj/knjdb/libknjdb"
-    @db = Knj::Db.new(@args[:db_args])
+    if @args[:db]
+      @db = @args[:db]
+    elsif @args[:db_args]
+      @db = Knj::Db.new(@args[:db_args])
+    else
+      raise "Could not figure out of database."
+    end
     
-    require "knj/objects"
     @ob = Knj::Objects.new(
       :class_path => "#{Service_watcher.path}/../models_client",
       :class_pre => "model_",
@@ -24,19 +28,23 @@ class Service_watcher_web
       :module => Service_watcher::Client::Model
     )
     
-    appserver_args = {
-      :port => @args[:port],
-      :db_args => @args[:db_args],
-      :doc_root => "#{File.dirname(__FILE__)}/../www",
-      :locales_root => "#{File.dirname(__FILE__)}/../locales",
-      :locales_gettext_funcs => true,
-      :locale_default => "en_GB",
-    }
-    appserver_args[:knjrbfw_path] = @args[:knjrbfw_path] if @args.key?(:knjrbfw_path)
-    appserver_args[:knjdbrevision_path] = @args[:knjdbrevision_path] if @args.key?(:knjdbrevision_path)
-    appserver_args.merge!(@args[:knjappserver_args]) if @args.key?(:knjappserver_args)
+    if args[:hayabusa]
+      @appserver = args[:hayabusa]
+    else
+      appserver_args = {
+        :port => @args[:port],
+        :db_args => @args[:db_args],
+        :doc_root => "#{File.dirname(__FILE__)}/../www",
+        :locales_root => "#{File.dirname(__FILE__)}/../locales",
+        :locales_gettext_funcs => true,
+        :locale_default => "en_GB",
+      }
+      appserver_args[:knjrbfw_path] = @args[:knjrbfw_path] if @args.key?(:knjrbfw_path)
+      appserver_args.merge!(@args[:knjappserver_args]) if @args.key?(:knjappserver_args)
+      
+      @appserver = Hayabusa.new(appserver_args)
+    end
     
-    @appserver = Knjappserver.new(appserver_args)
     @appserver.define_magic_var(:_site, self)
     @appserver.define_magic_var(:_ob, @ob)
     
@@ -45,7 +53,7 @@ class Service_watcher_web
       _session_hash[:sw]
     end
     
-    @appserver.start
+    @appserver.start if !args[:hayabusa]
   end
   
   def join
@@ -92,10 +100,10 @@ class Service_watcher_web
     end
     
     html = "<div style=\"width: #{width};\">"
-    html += "<div class=\"box\">"
+    html << "<div class=\"box\">"
     
     if title
-      html += "<div class=\"box_title\">#{title}</div>"
+      html << "<div class=\"box_title\">#{title}</div>"
     end
     
     return html

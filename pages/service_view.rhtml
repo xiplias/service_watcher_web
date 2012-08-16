@@ -34,9 +34,11 @@
     </thead>
     <tbody>
       <%
-        logs = _ob.list(:Log, {"object_lookup" => service, "limit" => 200, "orderby" => [["date_saved", "desc"]]})
+        count = 0
         
-        logs.each do |log|
+        _ob.list(:Log, {"object_lookup" => service, "limit" => 100, "orderby" => [["date_saved", "desc"]]}) do |log|
+          count += 1
+          
           %>
             <tr>
               <td>
@@ -52,7 +54,7 @@
           <%
         end
         
-        if logs.empty?
+        if count <= 0
           %>
             <tr>
               <td colspan="2" class="error">
