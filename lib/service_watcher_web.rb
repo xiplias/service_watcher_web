@@ -5,7 +5,7 @@ class Service_watcher_web
     @args = args
     
     require "#{@args[:knjrbfw_path]}knjrbfw" if !Kernel.const_defined?(:Knj)
-    require "#{@args[:hayabusa_path]}hayabusa"
+    require "#{@args[:hayabusa_path]}hayabusa" if !Kernel.const_defined?(:Hayabusa)
     require "#{@args[:service_watcher_path]}service_watcher"
     require "#{Service_watcher.path}/../include/client.rb"
     require "json"
